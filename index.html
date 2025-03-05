@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #e2e8f0 0%, #f0f4f8 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #48bb78;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        input {
+            width: 70px;
+            height: 70px;
+            border: none;
+            background: #f8fafc;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 28px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus {
+            outline: none;
+            background: white;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        button {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            text-align: left;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .info-section {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .info-toggle {
+            background: #edf2f7;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            text-align: left;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .info-toggle:hover {
+            background: #e2e8f0;
+        }
+
+        .info-content {
+            display: none;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-top: 10px;
+            line-height: 1.6;
+            color: #4a5568;
+        }
+
+        .info-content h2 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+
+        .info-content ul {
+            padding-left: 20px;
+        }
+
+        .info-content a {
+            color: #48bb78;
+            text-decoration: none;
+        }
+
+        .info-content a:hover {
+            text-decoration: underline;
+        }
+
+        .nav-links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .nav-links a {
+            color: #48bb78;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">WA</div>
+            <h1>Wordle Assistant</h1>
+        </div>
+        <div class="input-grid" id="inputGrid">
+            <input type="text" maxlength="1" placeholder="•">
+            <input type="text" maxlength="1" placeholder="•">
+            <input type="text" maxlength="1" placeholder="•">
+            <input type="text" maxlength="1" placeholder="•">
+            <input type="text" maxlength="1" placeholder="•">
+        </div>
+        <button onclick="getSuggestions()">Find Words</button>
+        <div id="results"></div>
+
+        <div class="info-section">
+            <button class="info-toggle">How to Use & Wordle Tips ▼</button>
+            <div class="info-content">
+                <h2>How to Use Help Wordle</h2>
+                <p>Do you need Wordle Help today? If so you have come to the right place. Follow the steps below to keep your Wordle streak alive!</p>
+                <ul>
+                    <li>Take your first guess in Wordle</li>
+                    <li>Come back here, enter any letters that are in the right positions in the corresponding green boxes</li>
+                    <li>Enter letters in the wrong positions in the yellow boxes</li>
+                    <li>Enter any letters that are not in the word in the grey boxes</li>
+                    <li>Enter any letters that are not in a specific position in the red boxes</li>
+                    <li>Click Submit and we'll suggest some words for you to try</li>
+                    <li>Try one of the suggested words then repeat. Come back as often as you need until Wordle is solved!</li>
+                </ul>
+
+                <h2>Wordle Tips</h2>
+                <ul>
+                    <li><strong>Start with a strong opening word</strong> – Choose a word with at least three vowels and a mix of common consonants (e.g., CRANE, ADIEU).</li>
+                    <li><strong>Avoid reusing eliminated letters</strong> – If a letter has been ruled out, don’t include it in future guesses.</li>
+                    <li><strong>Remember that letters can repeat</strong> – Words may contain double letters, such as SHEEP or LLAMA.</li>
+                    <li><strong>More common words are more likely</strong> – Wordle’s answer list favours familiar words over obscure ones.</li>
+                    <li><strong>Plural words ending in 'S' aren't included</strong> – For example, DESKS won’t be an answer.</li>
+                    <li><strong>Use strategic guesses to eliminate letters</strong> – Instead of trying to solve the word immediately, pick a word that helps narrow down possibilities.</li>
+                    <li><strong>Example:</strong> If you have _OOSE, the answer could be GOOSE, LOOSE, MOOSE, NOOSE. A good word to guess would be GOLEM—it won’t be the answer, but it tests multiple key letters.</li>
+                    <li><strong>If 'E' is eliminated, consider words ending in ‘Y’</strong> – Many words that don’t contain E may end in Y (e.g., PARTY, FUNNY).</li>
+                    <li><strong>Take your time</strong> – There's no time limit, so think through each guess carefully</li>
+                    <li><strong>When in trouble</strong>, visit <a href="http://helpwordle.com" target="_blank">helpwordle.com</a> :)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="faq.html">FAQ</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/suggestions';
+
+        async function getSuggestions() {
+            const letters = Array.from(document.querySelectorAll('input'))
+                .map(input => input.value.toUpperCase() || '_');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ letters })
+                });
+                const data = await response.json();
+                displayResults(data.suggestions);
+            } catch (error) {
+                displayResults(['Error fetching suggestions']);
+            }
+        }
+
+        function displayResults(words) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = words.length && words[0] !== 'Error fetching suggestions' ? 
+                `<h3>Suggested Words:</h3>${words.join(', ')}` :
+                `<h3>${words[0] || 'No matches found'}</h3>`;
+        }
+
+        document.querySelectorAll('input').forEach((input, index, inputs) => {
+            input.addEventListener('input', () => {
+                if (input.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+        });
+
+        document.querySelector('.info-toggle').addEventListener('click', function() {
+            const content = document.querySelector('.info-content');
+            const isVisible = content.style.display === 'block';
+            content.style.display = isVisible ? 'none' : 'block';
+            this.textContent = isVisible ? 'How to Use & Wordle Tips ▼' : 'How to Use & Wordle Tips ▲';
+        });
+    </script>
+</body>
+</html>
